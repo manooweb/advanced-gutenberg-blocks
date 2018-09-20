@@ -1,10 +1,11 @@
-import { flatMap } from 'lodash'
+
 import { arrayToTree } from 'performant-array-to-tree'
 
 import ListItems from './listitems'
 
 const { __ } = wp.i18n
 const { Component } = wp.element
+const { flatMap } = lodash
 
 export default class List extends Component {
 
@@ -13,7 +14,12 @@ export default class List extends Component {
   computeOutlineHeadings = ( blocks = [], path = [] ) => {
     return flatMap( blocks, ( block = {} ) => {
 
-      if ( block.name === 'core/heading' && block.attributes.content.length > 0 ) {
+      if (
+        block.name === 'core/heading' &&
+        block.hasOwnProperty('attributes') &&
+        block.attributes.hasOwnProperty('content') &&
+        block.attributes.content.length > 0
+      ) {
 
         // Define anchor slug
         let slug = block.attributes.content[0]

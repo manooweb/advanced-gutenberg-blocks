@@ -8,9 +8,8 @@
     "eject": "cgb-scripts eject"
   },
   "dependencies": {
-    "cgb-scripts": "1.9.5",
+    "cgb-scripts": "^1.9.8",
     "list.js": "^1.5.0",
-    "lodash": "^4.17.10",
     "performant-array-to-tree": "^1.1.2",
     "throttle-debounce": "^1.1.0"
   },
