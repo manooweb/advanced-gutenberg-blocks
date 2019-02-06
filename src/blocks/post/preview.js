@@ -13,23 +13,25 @@ export default class Preview extends Component {
 	getPost = () => {
 
 		const { postID, postType } = this.props.attributes
-	
-		fetch( `/wp-json/wp/v2/${postType}/${postID}` )
+
+		fetch( `${advancedGutenbergBlocksPost.rest}/${postType}/${postID}` )
     .then( response => response.json() )
     .then( post => {
 
-			this.setState( { post: post } )
+			this.setState( { post } )
 
 			// Author
-			fetch( `/wp-json/wp/v2/users/${post.author}` )
-			.then( response => response.json() )
-			.then( author => {
-				this.setState( { author: author.name } )
-			} )
+			if ( typeof post.author != "undefined" ) {
+				fetch( `${advancedGutenbergBlocksPost.rest}/users/${post.author}` )
+				.then( response => response.json() )
+				.then( author => {
+					this.setState( { author: author.name } )
+				} )
+			}
 
 			// Category
-			if (post.categories.length > 0 ) {
-				fetch( `/wp-json/wp/v2/categories/${post.categories[0]}` )
+			if ( typeof post.categories != "undefined" ) {
+				fetch( `${advancedGutenbergBlocksPost.rest}/categories/${post.categories[0]}` )
 				.then( response => response.json() )
 				.then( category => {
 					this.setState( { category: category.name } )
@@ -37,14 +39,17 @@ export default class Preview extends Component {
 			}
 
 			// Featured Media
-			fetch( `/wp-json/wp/v2/media/${post.featured_media}` )
-			.then( response => response.json() )
-			.then( featuredImage => {
-				this.setState( { featuredImage: featuredImage.media_details.sizes.large.source_url } )
-			} )
+			if ( typeof post.featured_media != "undefined" && post.featured_media != 0 ) {
+				fetch( `${advancedGutenbergBlocksPost.rest}/media/${post.featured_media}` )
+				.then( response => response.json() )
+				.then( featuredImage => {
+					let size = featuredImage.media_details.sizes.hasOwnProperty('large') ? 'large' : 'full';
+					this.setState( { featuredImage: featuredImage.media_details.sizes[size].source_url } )
+
+				} )
+			}
 
 		} )
-		
 	}
 
 	componentWillMount() {
@@ -65,7 +70,7 @@ export default class Preview extends Component {
 
 		// Get HTML Excerpt
 		const getExcerpt = () => {
-  		return {__html: this.state.post.excerpt.rendered }
+			return {__html: ( typeof this.state.post.excerpt != "undefined" ) ?  this.state.post.excerpt.rendered : '' }
 		}
 
     return (
@@ -106,7 +111,7 @@ export default class Preview extends Component {
 					</div>
 				</div>
 			) : (
-				<p class="AGB-block-message">{ __( 'Loading post...', 'advanced-gutenberg-blocks' ) }</p>
+				<p class="AGB-block-message">{ __( 'Loading post…', 'advanced-gutenberg-blocks' ) }</p>
 			)
     )
   }

@@ -15,7 +15,7 @@ export default class SearchProduct extends Component {
       return
     }
 
-    this.setState( { results: __( 'Loading...', 'advanced-gutenberg-blocks' ) } )
+    this.setState( { results: __( 'Loading…', 'advanced-gutenberg-blocks' ) } )
 
     let ck = advancedGutenbergBlocksGlobals.wooapikey
     let cs = advancedGutenbergBlocksGlobals.wooapisecret
@@ -26,7 +26,7 @@ export default class SearchProduct extends Component {
       this.setState( { results: results } )
     
     } else {
-      fetch( `/wp-json/wc/v2/products?search=${search}&per_page=20&consumer_key=${ck}&consumer_secret=${cs}` )
+      fetch( `${this.props.restURL}/products?search=${search}&per_page=20&consumer_key=${ck}&consumer_secret=${cs}` )
       .then( response => response.json() )
       .then( results => {
 
@@ -39,10 +39,6 @@ export default class SearchProduct extends Component {
     }
 
   } )
-
-	onChangeValue = id => {
-		this.props.onChange ( _.find( this.state.results, { id: id} ) )
-	}
 
   render() {
 
@@ -66,7 +62,7 @@ export default class SearchProduct extends Component {
                   return (
                     <li
                       key={product.id}
-                      onClick={ () => this.onChangeValue( product.id ) }
+                      onClick={ () => this.props.onChange( product ) }
                     >
                       { product.images.length > 0 && (
                         <img src={ product.images[0].src } alt={ product.name } />

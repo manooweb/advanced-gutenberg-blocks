@@ -17,11 +17,12 @@ class ClickToTweet {
 			'icon' => 'dashicons-twitter',
 			'category' => 'marketing',
 			'preview_image' => Consts::get_url().'admin/img/blocks/clicktotweet.jpg',
-			'description' => __( "Allow your visitors to easily share your most inspirationals sentences in a click", 'advanced-gutenberg-blocks' ),
+			'description' => __( "Allow your visitors to easily share your most inspirationals sentences in a click.", 'advanced-gutenberg-blocks' ),
 			'options_callback' => array( $this, 'settings' ),
+			'require' => __('This block needs your Twitter username'),
 		);
 
-		Blocks::register_block( 'advanced-gutenberg-blocks/card', __( 'Click To Tweet', 'advanced-gutenberg-blocks' ), $args );
+		Blocks::register_block( 'advanced-gutenberg-blocks/clicktotweet', __( 'Click To Tweet', 'advanced-gutenberg-blocks' ), $args );
 
 		// Register settings
 		Blocks::register_setting( 'advanced-gutenberg-blocks-twitter-username' );
@@ -43,15 +44,19 @@ class ClickToTweet {
 
 	public function render_block( $attributes ) {
 
+		// Default values
+		$content = array_key_exists( 'content', $attributes ) ? $attributes['content'] : '';
+		$hashtags =  array_key_exists( 'hashtags', $attributes ) ? $attributes['hashtags'] : '';
+
     $url  = ( isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http" ) . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
     $url = urlencode( $url );
 
     $user = $this->get_agb_or_yoast_twitter_user();
 
-    $content = str_replace( '<br/>', ' ', $attributes['content'] );
+    $content = str_replace( '<br/>', ' ', $content );
     $content = urlencode( strip_tags( $content ) );
 
-    $hashtags = urlencode( $attributes['hashtags'] );
+    $hashtags = urlencode( $hashtags );
 
     $intent_URL = "https://twitter.com/intent/tweet?url=$url&via=$user&text=$content&hashtags=$hashtags";
 
@@ -73,21 +78,9 @@ class ClickToTweet {
 
 	public function settings() {
 
-    $twitter_username = $this->get_agb_or_yoast_twitter_user();
-
-		echo '
-			<p class="AGB-block__settings__description">' . __( 'Provide your twitter website username (without @).' ) . '</p>
-
-			<div class="AGB-block__settings__option">
-				<div class="AGB-block__settings__label">
-					<label for="advanced-gutenberg-blocks-twitter-username"> ' . __( 'Twitter username', 'advanced-gutenberg-blocks' ) . '</label>
-				</div>
-
-				<div class="AGB-block__settings__field">
-					<input type="text" name="advanced-gutenberg-blocks-twitter-username" placeholder="AdvancedBlocks" value="' . $twitter_username . '">
-				</div>
-			</div>
-		';
+		$twitter_username = $this->get_agb_or_yoast_twitter_user();
+			
+		include Consts::get_path() . 'admin/templates/settings/clicktotweet.php';
 	}
 
 

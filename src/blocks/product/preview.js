@@ -16,7 +16,7 @@ export default class Preview extends Component {
     let ck = advancedGutenbergBlocksGlobals.wooapikey
     let cs = advancedGutenbergBlocksGlobals.wooapisecret
 
-    fetch( `/wp-json/wc/v2/products/${productID}?consumer_key=${ck}&consumer_secret=${cs}` )
+    fetch( `${advancedGutenbergBlocksProduct.rest}/products/${productID}?consumer_key=${ck}&consumer_secret=${cs}` )
     .then( response => response.json() )
     .then( product => {
 			this.setState( { product: product } )
@@ -97,7 +97,7 @@ export default class Preview extends Component {
 					</div>
 				</div>
 			) : (
-				<p class="AGB-block-message">{ __( 'Loading product...', 'advanced-gutenberg-blocks' ) }</p>
+				<p class="AGB-block-message">{ __( 'Loading product…', 'advanced-gutenberg-blocks' ) }</p>
 			)
     )
   }

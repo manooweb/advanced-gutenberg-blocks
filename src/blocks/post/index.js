@@ -13,15 +13,14 @@ export default registerBlockType(
   {
     title: __( 'Post', 'advanced-gutenberg-blocks' ),
     description: __( 'Display a pretty post link (from any post type)', 'advanced-gutenberg-blocks' ),
-    category: 'common',
-    icon: { background: '#D56561', foreground: "#fff", src: 'admin-post' },
+    category: 'agb',
+    icon: { background: '#2F313A', foreground: '#DEBB8F', src: 'admin-post' },
     keywords: [
       __( 'link', 'advanced-gutenberg-blocks' ),
     ],
     attributes: {
       postID: {
-        type: 'string',
-				default: false,
+        type: 'integer',
       },
       postType: {
         type: 'string',
@@ -41,8 +40,8 @@ export default registerBlockType(
     },
     edit: props => {
 
-			const { attributes, setAttributes } = props
-			const { postID, postType } = attributes
+      const { attributes, setAttributes } = props
+      const { postID, postType } = attributes
 
       // Set default values (keep here to save them in html
       ! postType && setAttributes( { postType: 'Post' } )

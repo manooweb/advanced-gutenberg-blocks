@@ -1,8 +1,6 @@
 import './style.scss'
 import './editor.scss'
 
-import classnames from 'classnames'
-
 import Inspector from './inspect'
 import Preview from './preview'
 
@@ -16,8 +14,8 @@ export default registerBlockType(
   {
 		title: __( 'Add to cart button', 'advanced-gutenberg-blocks' ),
     description: __( 'This button allow a customer to quickly add a product to cart', 'advanced-gutenberg-blocks' ),
-    category: 'common',
-    icon: { background: '#D56561', foreground: "#fff", src: 'cart' },
+    category: 'agb',
+    icon: { background: '#2F313A', foreground: '#DEBB8F', src: 'cart' },
     keywords: [
       __( 'purchase', 'advanced-gutenberg-blocks' ),
     ],
@@ -42,7 +40,7 @@ export default registerBlockType(
     },
     edit: props => {
 
-				const { focus, attributes, setAttributes } = props
+				const { attributes, setAttributes } = props
 				const { icon, backgroundColor } = attributes
 
 				// Set default values (keep here to save them in html
@@ -52,7 +50,7 @@ export default registerBlockType(
 	      return (
 	        <Fragment>
 	          <Inspector { ...{ attributes, setAttributes } } />
-            <Preview { ...{ attributes } } />
+            <Preview { ...{ attributes, setAttributes } } />
 					</Fragment>
 	      )
 			},

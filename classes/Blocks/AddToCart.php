@@ -11,6 +11,7 @@ class AddToCart {
 
 		// Register hooks
 		add_action( 'init', array( $this, 'register_render' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'front_assets' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'editor_assets' ) );
 
 		// Register Block in the plugin settings page
@@ -18,7 +19,7 @@ class AddToCart {
 			'icon' => 'dashicons-cart',
 			'category' => 'woo',
 			'preview_image' => Consts::get_url() . 'admin/img/blocks/addtocart.jpg',
-			'description' => __( 'An add to cart button to quickly purchase a WooCommerce product', 'advanced-gutenberg-blocks' ),
+			'description' => __( 'An add to cart button to quickly purchase a WooCommerce product.', 'advanced-gutenberg-blocks' ),
 		);
 
 		Blocks::register_block( 'advanced-gutenberg-blocks/addtocart', __( 'Add to cart button', 'advanced-gutenberg-blocks' ), $args );
@@ -36,6 +37,12 @@ class AddToCart {
       [ 'render_callback' => array( $this, 'render_block' ) ]
     );
 
+	}
+
+	public function front_assets() {
+		if ( has_block( 'advanced-gutenberg-blocks/addtocart' ) ) {
+			wp_enqueue_style( 'dashicons' );
+		}
 	}
 
 	public function render_block( $attributes ) {
@@ -72,6 +79,7 @@ class AddToCart {
 			'advancedGutenbergBlocksAddtocart',
 			array(
 				'currency' => get_woocommerce_currency_symbol(),
+				'rest' => get_rest_url() . 'wc/v2'
 			)
 		);
 	}

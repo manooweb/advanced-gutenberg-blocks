@@ -4,6 +4,8 @@ import './editor.scss'
 import Tools from './tools'
 import List from './list'
 
+import deprecated from './deprecated'
+
 const { __ } = wp.i18n
 const { registerBlockType } = wp.blocks
 const { RichText } = wp.editor
@@ -16,15 +18,15 @@ export default registerBlockType(
   {
     title: __( 'Table of contents', 'advanced-gutenberg-blocks' ),
     description: __( 'Display an auto generated, dynamic table of contents', 'advanced-gutenberg-blocks' ),
-    category: 'common',
-    icon: { background: '#D56561', foreground: "#fff", src: 'book-alt' },
+    category: 'agb',
+    icon: { background: '#2F313A', foreground: '#DEBB8F', src: 'book-alt' },
     keywords: [ __('summary', 'advanced-gutenberg-blocks' ) ],
     attributes: {
 			title: {
         source: 'text',
         type: 'string',
         selector: '.wp-block-advanced-gutenberg-blocks-summary__title',
-        default: __( "Table of contents", 'advanced-gutenberg-blocks' ),
+        default: advancedGutenbergBlocksSummary.title,
       },
       summary: {
         source: 'html',
@@ -36,21 +38,13 @@ export default registerBlockType(
 			},
     },
     edit: compose(
-      [ withSelect( ( select ) => {
-        const { getBlocks } = select( 'core/editor' )
-        return { blocks: getBlocks() };
-
-      } ),
-      withDispatch( dispatch => {
-    		const {
-    			updateBlockAttributes,
-    		} = dispatch( 'core/editor' )
-
-    		return {
-    			updateBlockAttributes: updateBlockAttributes,
-    		}
-      } )
-    ] ) ( props => {
+      withSelect( ( select ) => ({
+        blocks: select( 'core/editor' ).getBlocks()
+      })),
+      withDispatch( dispatch => ({
+    		updateBlockAttributes: dispatch( 'core/editor' ).updateBlockAttributes
+      }))
+    ) ( props => {
 
   		const { attributes, setAttributes, blocks, updateBlockAttributes } = props
       const { title, ordered } = attributes
@@ -67,6 +61,9 @@ export default registerBlockType(
 	            className='wp-block-advanced-gutenberg-blocks-summary__title'
 	            onChange={ title => setAttributes( { title } ) }
 	  				/>
+            <div className="wp-block-advanced-gutenberg-blocks-summary__fold">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </div>
             <List { ...{ ordered, setAttributes, blocks, updateBlockAttributes } } />
 	        </div>
 
@@ -75,11 +72,14 @@ export default registerBlockType(
     } ),
     save: props => {
 
-			const { title, summary, ordered } = props.attributes
-
+      const { title, summary, ordered } = props.attributes
+      
 			return (
         <div>
           <p className="wp-block-advanced-gutenberg-blocks-summary__title">{title}</p>
+          <div className="wp-block-advanced-gutenberg-blocks-summary__fold">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-up"><polyline points="18 15 12 9 6 15"></polyline></svg>
+          </div>
 
           { ordered && (
               <ol
@@ -97,6 +97,7 @@ export default registerBlockType(
           }
         </div>
       )
-    }
+    },
+    deprecated: deprecated
   }
 )

@@ -11,7 +11,6 @@ use AdvancedGutenbergBlocks\Services\Blocks;
 
 use AdvancedGutenbergBlocks\WP\Installer;
 use AdvancedGutenbergBlocks\WP\Admin;
-use AdvancedGutenbergBlocks\WP\Front;
 use AdvancedGutenbergBlocks\WP\Gutenberg;
 use AdvancedGutenbergBlocks\WP\Settings;
 
@@ -28,6 +27,9 @@ use AdvancedGutenbergBlocks\Blocks\Gmap;
 use AdvancedGutenbergBlocks\Blocks\ClickToTweet;
 use AdvancedGutenbergBlocks\Blocks\Summary;
 use AdvancedGutenbergBlocks\Blocks\Intro;
+use AdvancedGutenbergBlocks\Blocks\Giphy;
+use AdvancedGutenbergBlocks\Blocks\Unsplash;
+use AdvancedGutenbergBlocks\Blocks\Code;
 
 
 /**
@@ -68,7 +70,6 @@ class AdvancedGutenbergBlocks {
 
 		require_once $path . 'classes/WP/Installer.php';
 		require_once $path . 'classes/WP/Admin.php';
-		require_once $path . 'classes/WP/Front.php';
 		require_once $path . 'classes/WP/Gutenberg.php';
 		require_once $path . 'classes/WP/Settings.php';
 
@@ -85,17 +86,15 @@ class AdvancedGutenbergBlocks {
 		require_once $path . 'classes/Blocks/ClickToTweet.php';
 		require_once $path . 'classes/Blocks/Summary.php';
 		require_once $path . 'classes/Blocks/Intro.php';
-
-		// Hack to get JS strings translatable by wp.org
-		require_once $path . 'js-strings.php';
-
+		require_once $path . 'classes/Blocks/Giphy.php';
+		require_once $path . 'classes/Blocks/Unsplash.php';
+		require_once $path . 'classes/Blocks/Code.php';
 
 		// Activation / Deactivation hooks
 		(new Installer)->register_hooks();
 
 		// Init Classes and Hooks
     (new Admin)->register_hooks();
-    (new Front)->register_hooks();
     (new Gutenberg)->register_hooks();
     (new Settings)->register_hooks();
 
@@ -113,6 +112,9 @@ class AdvancedGutenbergBlocks {
 		(new ClickToTweet)->run();
 		(new Summary)->run();
 		(new Intro)->run();
+		(new Giphy)->run();
+		(new Unsplash)->run();
+		(new Code)->run();
 	}
 
 
@@ -122,9 +124,15 @@ class AdvancedGutenbergBlocks {
 
 	public function check_compatibility() {
 		global $wp_version;
+		
+		// Check version 5+ and RC
+		if ( version_compare( $wp_version, '5.0', '>=' ) or strpos( $wp_version, '5.0-RC') !== false ) {
+			return;
+		}
 
-		if ( ! version_compare( $wp_version, '5.0', '>=' ) and ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
-
+		// WP 4.x Check if plugin is activated 
+		if ( ! is_plugin_active( 'gutenberg/gutenberg.php' ) ) {
+			
 			deactivate_plugins( '/advanced-gutenberg-blocks/plugin.php' );
 			add_action( 'admin_notices', array( $this , 'compatibility_notice') );
 		}

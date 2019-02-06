@@ -2,7 +2,7 @@ import './style.scss'
 import './editor.scss'
 
 const { __ } = wp.i18n
-const { registerBlockType } = wp.blocks
+const { registerBlockType, createBlock } = wp.blocks
 const { RichText } = wp.editor
 
 export default registerBlockType(
@@ -10,8 +10,8 @@ export default registerBlockType(
   {
     title: __( 'Intro', 'advanced-gutenberg-blocks' ),
     description: __( 'Display a nice introduction text at the beginning of your post', 'advanced-gutenberg-blocks' ),
-    category: 'common',
-    icon: { background: '#D56561', foreground: "#fff", src: 'editor-textcolor' },
+    category: 'agb',
+    icon: { background: '#2F313A', foreground: '#DEBB8F', src: 'editor-textcolor' },
     keywords: [
       __( 'introduction', 'advanced-gutenberg-blocks' ),
       __( 'subhead', 'advanced-gutenberg-blocks' ),
@@ -25,6 +25,19 @@ export default registerBlockType(
       },
     },
     useOnce: true,
+    transforms: {
+      from: [
+        {
+          type: 'block',
+          blocks: [ 'core/paragraph' ],
+          transform: function ( attributes ) {
+            return createBlock( 'advanced-gutenberg-blocks/intro', {
+                content: attributes.content,
+            } )
+          }
+        }
+      ]
+    },
     edit: props => {
 
 			const { attributes: { content }, setAttributes } = props

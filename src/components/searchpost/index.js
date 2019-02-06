@@ -17,9 +17,9 @@ export default class SearchPost extends Component {
       return
     }
 
-    this.setState( { results: __( 'Loading...', 'advanced-gutenberg-blocks' ) } )
-
-    fetch( `/wp-json/wp/v2/${this.state.currentType}/?search=${encodeURI( search )}&per_page=20` )
+    this.setState( { results: __( 'Loading…', 'advanced-gutenberg-blocks' ) } )
+    
+    fetch( `${this.props.restURL}/${this.state.currentType}/?search=${encodeURI( search )}&per_page=20` )
     .then( response => response.json() )
     .then( results => {
 
@@ -37,6 +37,12 @@ export default class SearchPost extends Component {
 
     return (
       <Fragment>
+
+        <SelectControl
+					label={ __( 'Post type', 'advanced-gutenberg-blocks' ) }
+					options={ JSON.parse( advancedGutenbergBlocksPost.types ) }
+					onChange={ value => this.setState( { currentType: value } ) }
+				/>
 
 				<TextControl
 					type="search"
@@ -65,12 +71,6 @@ export default class SearchPost extends Component {
             )
           }
         </div>
-
-				<SelectControl
-					label={ __( 'In post type', 'advanced-gutenberg-blocks' ) }
-					options={ JSON.parse( advancedGutenbergBlocksPost.types ) }
-					onChange={ value => this.setState( { currentType: value } ) }
-				/>
 
 			</Fragment>
     )
